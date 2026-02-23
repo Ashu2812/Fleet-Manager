@@ -32,6 +32,15 @@
       "route": "Delhi Noida",
       "goods": "FMCG",
       "notes": ""
+    },
+    {
+      "id": "mlz4kmy2hafp5",
+      "name": "Zepto",
+      "contact": "Ravi Kumar",
+      "mobile": "9999999999",
+      "route": "Delhi-Noida",
+      "goods": "Pharma",
+      "notes": ""
     }
   ],
   "assignments": [
