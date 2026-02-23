@@ -66,7 +66,8 @@
     .form-grid .full { grid-column: 1/-1; }
     label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; }
     input[type="text"], input[type="date"], input[type="password"], select, textarea {
-      width: 100%; padding: 8px 11px; border-radius: 7px; border: 1px solid #2d3748; background: #0f1117; color: #e2e8f0; font-size: 0.88rem;
+      width: 100%; padding: 8px 11px; border-radius: 7px; border: 1px solid #2d3748;
+      background: #0f1117; color: #e2e8f0; font-size: 0.88rem;
     }
     input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; }
     textarea { resize: vertical; min-height: 65px; }
@@ -81,9 +82,12 @@
     .vehicle-card .info-row .icon { color: #60a5fa; min-width: 16px; }
     .vehicle-card .edit-btn { position: absolute; top: 12px; right: 12px; }
     .no-assign { color: #ef4444; font-style: italic; }
-    .date-badge { background: #1a2744; border: 1px solid #2563eb; border-radius: 7px; padding: 5px 13px; font-size: 0.83rem; color: #60a5fa; display: inline-block; margin-bottom: 18px; }
+    .date-badge {
+      background: #1a2744; border: 1px solid #2563eb; border-radius: 7px;
+      padding: 5px 13px; font-size: 0.83rem; color: #60a5fa; display: inline-block;
+      transition: color 0.3s, border-color 0.3s;
+    }
 
-    /* Settings */
     .settings-box { background: #1e293b; border-radius: 12px; padding: 24px; max-width: 560px; }
     .settings-box p { color: #94a3b8; font-size: 0.88rem; margin: 8px 0 16px; line-height: 1.6; }
     .settings-box .field { margin-bottom: 14px; }
@@ -101,6 +105,7 @@
     @media (max-width: 600px) {
       main { padding: 14px; }
       .form-grid { grid-template-columns: 1fr; }
+      nav { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -115,7 +120,7 @@
 </header>
 
 <nav>
-  <button class="active" onclick="showTab('today',this)">📅 Today</button>
+  <button class="active" onclick="showTab('today',this)">📅 Dashboard</button>
   <button onclick="showTab('vehicles',this)">🚗 Vehicles</button>
   <button onclick="showTab('drivers',this)">👤 Drivers</button>
   <button onclick="showTab('companies',this)">🏢 Companies</button>
@@ -125,9 +130,18 @@
 
 <main>
 
-  <!-- TODAY -->
+  <!-- ═══ DASHBOARD (TODAY / ANY DATE) ═══ -->
   <div id="tab-today" class="tab-content active">
-    <div id="todayDate" class="date-badge"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
+      <div id="todayDate" class="date-badge"></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-info btn-sm" onclick="shiftDate(-1)">◀ Prev</button>
+        <input type="date" id="dashboardDate" onchange="renderToday()"
+          style="padding:5px 10px;border-radius:7px;border:1px solid #2d3748;background:#1e293b;color:#e2e8f0;font-size:0.88rem;"/>
+        <button class="btn btn-info btn-sm" onclick="shiftDate(1)">Next ▶</button>
+        <button class="btn btn-success btn-sm" onclick="jumpToToday()">📅 Today</button>
+      </div>
+    </div>
     <div class="stats" id="statsBar"></div>
     <div class="toolbar">
       <input type="text" id="todaySearch" placeholder="🔍 Search vehicle or driver..." oninput="renderToday()"/>
@@ -137,43 +151,49 @@
     <div class="vehicle-grid" id="todayGrid"></div>
   </div>
 
-  <!-- VEHICLES -->
+  <!-- ═══ VEHICLES ═══ -->
   <div id="tab-vehicles" class="tab-content">
     <div class="toolbar">
       <input type="text" id="vehicleSearch" placeholder="🔍 Search vehicles..." oninput="renderVehicles()"/>
       <button class="btn btn-primary" onclick="openVehicleModal()">+ Add Vehicle</button>
     </div>
     <div class="table-wrap">
-      <table><thead><tr><th>#</th><th>Vehicle No.</th><th>Type</th><th>Make / Model</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="vehicleTable"></tbody></table>
+      <table>
+        <thead><tr><th>#</th><th>Vehicle No.</th><th>Type</th><th>Make / Model</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="vehicleTable"></tbody>
+      </table>
     </div>
   </div>
 
-  <!-- DRIVERS -->
+  <!-- ═══ DRIVERS ═══ -->
   <div id="tab-drivers" class="tab-content">
     <div class="toolbar">
       <input type="text" id="driverSearch" placeholder="🔍 Search drivers..." oninput="renderDrivers()"/>
       <button class="btn btn-primary" onclick="openDriverModal()">+ Add Driver</button>
     </div>
     <div class="table-wrap">
-      <table><thead><tr><th>#</th><th>Name</th><th>Mobile</th><th>License No.</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="driverTable"></tbody></table>
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Mobile</th><th>License No.</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="driverTable"></tbody>
+      </table>
     </div>
   </div>
 
-  <!-- COMPANIES -->
+  <!-- ═══ COMPANIES ═══ -->
   <div id="tab-companies" class="tab-content">
     <div class="toolbar">
       <input type="text" id="companySearch" placeholder="🔍 Search companies..." oninput="renderCompanies()"/>
       <button class="btn btn-primary" onclick="openCompanyModal()">+ Add Company</button>
     </div>
     <div class="table-wrap">
-      <table><thead><tr><th>#</th><th>Company Name</th><th>Contact</th><th>Mobile</th><th>Route / Area</th><th>Actions</th></tr></thead>
-      <tbody id="companyTable"></tbody></table>
+      <table>
+        <thead><tr><th>#</th><th>Company Name</th><th>Contact</th><th>Mobile</th><th>Route / Area</th><th>Actions</th></tr></thead>
+        <tbody id="companyTable"></tbody>
+      </table>
     </div>
   </div>
 
-  <!-- ASSIGNMENTS -->
+  <!-- ═══ ASSIGNMENTS ═══ -->
   <div id="tab-assignments" class="tab-content">
     <div class="toolbar">
       <input type="date" id="assignDate"/>
@@ -181,17 +201,18 @@
       <button class="btn btn-info" onclick="copyYesterdayAssignments()">📋 Copy Yesterday</button>
     </div>
     <div class="table-wrap">
-      <table><thead><tr><th>Date</th><th>Vehicle</th><th>Driver</th><th>Company</th><th>Notes</th><th>Actions</th></tr></thead>
-      <tbody id="assignmentTable"></tbody></table>
+      <table>
+        <thead><tr><th>Date</th><th>Vehicle</th><th>Driver</th><th>Company</th><th>Notes</th><th>Actions</th></tr></thead>
+        <tbody id="assignmentTable"></tbody>
+      </table>
     </div>
   </div>
 
-  <!-- SETTINGS -->
+  <!-- ═══ SETTINGS ═══ -->
   <div id="tab-settings" class="tab-content">
     <div class="settings-box">
       <h2 style="color:#60a5fa;margin-bottom:4px;">⚙ GitHub Storage Settings</h2>
       <p>Your fleet data is saved to a <code>data.json</code> file in your GitHub repository. Configure the connection below. These settings are saved in this browser only.</p>
-
       <div class="field">
         <label>GitHub Username *</label>
         <input type="text" id="cfg_user" placeholder="e.g. rajesh-sharma"/>
@@ -212,7 +233,7 @@
         <input type="password" id="cfg_token" placeholder="github_pat_xxxx..."/>
         <div class="help-text">
           Go to GitHub → Settings → Developer Settings → Personal Access Tokens → Fine-grained tokens.<br/>
-          Grant <strong>Contents: Read & Write</strong> on your repo only.
+          Grant <strong>Contents: Read &amp; Write</strong> on your repo only.
         </div>
       </div>
       <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
@@ -228,7 +249,7 @@
 
 </main>
 
-<!-- ══ VEHICLE MODAL ══ -->
+<!-- ═══ VEHICLE MODAL ═══ -->
 <div class="overlay" id="vehicleModal">
   <div class="modal">
     <h2 id="vehicleModalTitle">Add Vehicle</h2>
@@ -251,12 +272,12 @@
     <input type="hidden" id="veh_id"/>
     <div class="modal-footer">
       <button class="btn btn-danger" onclick="closeModal('vehicleModal')">Cancel</button>
-      <button class="btn btn-success" onclick="saveVehicle()">Save & Sync</button>
+      <button class="btn btn-success" onclick="saveVehicle()">Save &amp; Sync</button>
     </div>
   </div>
 </div>
 
-<!-- ══ DRIVER MODAL ══ -->
+<!-- ═══ DRIVER MODAL ═══ -->
 <div class="overlay" id="driverModal">
   <div class="modal">
     <h2 id="driverModalTitle">Add Driver</h2>
@@ -274,12 +295,12 @@
     <input type="hidden" id="drv_id"/>
     <div class="modal-footer">
       <button class="btn btn-danger" onclick="closeModal('driverModal')">Cancel</button>
-      <button class="btn btn-success" onclick="saveDriver()">Save & Sync</button>
+      <button class="btn btn-success" onclick="saveDriver()">Save &amp; Sync</button>
     </div>
   </div>
 </div>
 
-<!-- ══ COMPANY MODAL ══ -->
+<!-- ═══ COMPANY MODAL ═══ -->
 <div class="overlay" id="companyModal">
   <div class="modal">
     <h2 id="companyModalTitle">Add Company</h2>
@@ -294,12 +315,12 @@
     <input type="hidden" id="cmp_id"/>
     <div class="modal-footer">
       <button class="btn btn-danger" onclick="closeModal('companyModal')">Cancel</button>
-      <button class="btn btn-success" onclick="saveCompany()">Save & Sync</button>
+      <button class="btn btn-success" onclick="saveCompany()">Save &amp; Sync</button>
     </div>
   </div>
 </div>
 
-<!-- ══ ASSIGNMENT MODAL ══ -->
+<!-- ═══ ASSIGNMENT MODAL ═══ -->
 <div class="overlay" id="assignmentModal">
   <div class="modal">
     <h2 id="assignmentModalTitle">New Assignment</h2>
@@ -313,7 +334,7 @@
     <input type="hidden" id="asgn_id"/>
     <div class="modal-footer">
       <button class="btn btn-danger" onclick="closeModal('assignmentModal')">Cancel</button>
-      <button class="btn btn-success" onclick="saveAssignment()">Save & Sync</button>
+      <button class="btn btn-success" onclick="saveAssignment()">Save &amp; Sync</button>
     </div>
   </div>
 </div>
@@ -331,19 +352,14 @@
 // IN-MEMORY DATA STORE
 // ══════════════════════════════════════════
 let DB = { vehicles: [], drivers: [], companies: [], assignments: [] };
-let fileSHA = null; // GitHub requires the current file SHA to update it
+let fileSHA = null;
 
 // ══════════════════════════════════════════
-// SETTINGS (stored in localStorage — only config, NOT data)
+// SETTINGS
 // ══════════════════════════════════════════
 const CFG_KEY = 'fleetGitConfig';
-
-function getCfg() {
-  return JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
-}
-function saveCfg(cfg) {
-  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
-}
+function getCfg() { return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }
+function saveCfg(cfg) { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); }
 
 function saveSettings() {
   const cfg = {
@@ -372,7 +388,6 @@ function apiUrl() {
   const c = getCfg();
   return `https://api.github.com/repos/${c.user}/${c.repo}/contents/data.json?ref=${c.branch || 'main'}`;
 }
-
 function apiHeaders() {
   const c = getCfg();
   return {
@@ -383,17 +398,18 @@ function apiHeaders() {
   };
 }
 
-// READ — fetch data.json from GitHub
 async function loadFromGitHub() {
   const cfg = getCfg();
-  if (!cfg.user || !cfg.token) { showTab('settings', document.querySelector('nav button:last-child')); toast('Please configure GitHub settings first!', 'error'); return; }
-
+  if (!cfg.user || !cfg.token) {
+    showTab('settings', document.querySelectorAll('nav button')[5]);
+    toast('Please configure GitHub settings first!', 'error');
+    return;
+  }
   showLoading('Loading from GitHub...');
   setSyncStatus('busy', '⏳ Loading...');
   try {
     const res = await fetch(apiUrl(), { headers: apiHeaders() });
     if (res.status === 404) {
-      // File doesn't exist yet — start fresh
       fileSHA = null;
       DB = { vehicles: [], drivers: [], companies: [], assignments: [] };
       hideLoading(); setSyncStatus('ok', '✓ Ready (new)');
@@ -402,7 +418,7 @@ async function loadFromGitHub() {
     }
     if (!res.ok) throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
     const json = await res.json();
-    fileSHA = json.sha; // IMPORTANT: needed to update the file later
+    fileSHA = json.sha;
     const decoded = JSON.parse(atob(json.content.replace(/\n/g, '')));
     DB = { vehicles: [], drivers: [], companies: [], assignments: [], ...decoded };
     hideLoading(); setSyncStatus('ok', '✓ Synced');
@@ -415,33 +431,23 @@ async function loadFromGitHub() {
   }
 }
 
-// WRITE — save data.json to GitHub (creates a commit)
 async function saveToGitHub(commitMsg) {
   const cfg = getCfg();
   if (!cfg.user || !cfg.token) { toast('GitHub not configured!', 'error'); return false; }
-
   showLoading('Saving to GitHub...');
   setSyncStatus('busy', '⏳ Saving...');
   try {
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(DB, null, 2))));
     const body = {
       message: commitMsg || 'Fleet update – ' + new Date().toLocaleString('en-IN'),
-      content: content,
+      content,
       branch: cfg.branch || 'main'
     };
-    if (fileSHA) body.sha = fileSHA; // required for update, omit for first creation
-
-    const res = await fetch(apiUrl(), {
-      method: 'PUT',
-      headers: apiHeaders(),
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || res.statusText);
-    }
+    if (fileSHA) body.sha = fileSHA;
+    const res = await fetch(apiUrl(), { method: 'PUT', headers: apiHeaders(), body: JSON.stringify(body) });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.message || res.statusText); }
     const json = await res.json();
-    fileSHA = json.content.sha; // update SHA for next save
+    fileSHA = json.content.sha;
     hideLoading(); setSyncStatus('ok', '✓ Synced');
     return true;
   } catch(e) {
@@ -457,13 +463,14 @@ async function testConnection() {
   try {
     const res = await fetch(apiUrl(), { headers: apiHeaders() });
     hideLoading();
-    if (res.status === 200 || res.status === 404) toast('✅ Connection successful! ' + (res.status === 404 ? '(data.json will be created on first save)' : ''));
+    if (res.status === 200 || res.status === 404)
+      toast('✅ Connection successful! ' + (res.status === 404 ? '(data.json will be created on first save)' : ''));
     else toast('Connection failed: ' + res.status + ' ' + res.statusText, 'error');
   } catch(e) { hideLoading(); toast('Connection failed: ' + e.message, 'error'); }
 }
 
 // ══════════════════════════════════════════
-// UI HELPERS
+// UTILITIES
 // ══════════════════════════════════════════
 function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
 const todayStr = () => new Date().toISOString().split('T')[0];
@@ -478,23 +485,27 @@ function showLoading(msg) {
   document.getElementById('loadingOverlay').classList.add('show');
 }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function toast(msg, type='success') {
   const el = document.getElementById('toast');
-  el.textContent = msg; el.style.background = type==='error' ? '#dc2626' : '#16a34a';
-  el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3500);
+  el.textContent = msg;
+  el.style.background = type === 'error' ? '#dc2626' : '#16a34a';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
 }
 
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   const now = new Date();
   document.getElementById('headerDate').textContent =
     now.toLocaleDateString('en-IN', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
-  document.getElementById('todayDate').textContent =
-    '📅 Today: ' + now.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  document.getElementById('assignDate').value = todayStr();
+  document.getElementById('assignDate').value   = todayStr();
+  document.getElementById('dashboardDate').value = todayStr();
   loadSettingsUI();
-  loadFromGitHub(); // auto-load on open
+  loadFromGitHub();
 });
 
 function showTab(name, btn) {
@@ -505,343 +516,459 @@ function showTab(name, btn) {
   if (name === 'assignments') renderAssignments();
 }
 
-function renderAll() { renderToday(); renderVehicles(); renderDrivers(); renderCompanies(); renderAssignments(); updateStats(); }
+function renderAll() {
+  renderToday(); renderVehicles(); renderDrivers(); renderCompanies(); renderAssignments();
+}
 
 // ══════════════════════════════════════════
 // STATS
 // ══════════════════════════════════════════
-function updateStats() {
-  const ta = DB.assignments.filter(a => a.date === todayStr());
-  const ua = DB.vehicles.filter(v => v.status==='active' && !ta.find(a => a.vehicleId===v.id)).length;
+function updateStats(dateOverride) {
+  const d  = dateOverride || todayStr();
+  const ta = DB.assignments.filter(a => a.date === d);
+  const ua = DB.vehicles.filter(v => v.status === 'active' && !ta.find(a => a.vehicleId === v.id)).length;
   document.getElementById('statsBar').innerHTML = `
     <div class="stat-card"><div class="num">${DB.vehicles.length}</div><div class="lbl">Vehicles</div></div>
-    <div class="stat-card"><div class="num">${DB.drivers.filter(d=>d.status==='active').length}</div><div class="lbl">Active Drivers</div></div>
+    <div class="stat-card"><div class="num">${DB.drivers.filter(x => x.status==='active').length}</div><div class="lbl">Active Drivers</div></div>
     <div class="stat-card"><div class="num">${DB.companies.length}</div><div class="lbl">Companies</div></div>
-    <div class="stat-card"><div class="num" style="color:#34d399">${ta.length}</div><div class="lbl">Assigned Today</div></div>
+    <div class="stat-card"><div class="num" style="color:#34d399">${ta.length}</div><div class="lbl">Assigned</div></div>
     <div class="stat-card"><div class="num" style="color:#f87171">${ua}</div><div class="lbl">Unassigned</div></div>`;
 }
 
 // ══════════════════════════════════════════
-// TODAY'S VIEW
+// DASHBOARD — ANY DATE VIEW
 // ══════════════════════════════════════════
 function renderToday() {
-  const search = (document.getElementById('todaySearch')?.value||'').toLowerCase();
+  const dashDate = document.getElementById('dashboardDate')?.value || todayStr();
+  const isToday  = dashDate === todayStr();
+
+  const label = new Date(dashDate + 'T00:00:00').toLocaleDateString('en-IN', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+  const badge = document.getElementById('todayDate');
+  badge.textContent      = (isToday ? '📅 Today: ' : '📆 Viewing: ') + label;
+  badge.style.borderColor = isToday ? '#2563eb' : '#d97706';
+  badge.style.color       = isToday ? '#60a5fa'  : '#fbbf24';
+
+  const search = (document.getElementById('todaySearch')?.value || '').toLowerCase();
   const cf     = document.getElementById('todayCompanyFilter');
   const cfVal  = cf?.value || '';
-  // rebuild company filter
-  const prev = cf.value;
+  const prev   = cf.value;
   cf.innerHTML = '<option value="">All Companies</option>';
   DB.companies.forEach(c => cf.innerHTML += `<option value="${c.id}">${c.name}</option>`);
   cf.value = prev;
 
-  const todayAssigns = DB.assignments.filter(a => a.date === todayStr());
+  const dateAssigns = DB.assignments.filter(a => a.date === dashDate);
   let html = '';
-  DB.vehicles.filter(v => v.status==='active').forEach(v => {
-    const asgn    = todayAssigns.find(a => a.vehicleId===v.id);
-    const driver  = asgn ? DB.drivers.find(d=>d.id===asgn.driverId) : null;
-    const company = asgn ? DB.companies.find(c=>c.id===asgn.companyId) : null;
-    if (search && !(v.number.toLowerCase().includes(search) || (driver&&driver.name.toLowerCase().includes(search)))) return;
-    if (cfVal && (!company || company.id!==cfVal)) return;
-    html += `<div class="vehicle-card">
-      <button class="btn btn-warning btn-sm edit-btn" onclick="quickAssign('${v.id}')">✏ Edit</button>
-      <div class="vnum">🚛 ${v.number}</div>
-      <div class="vtype">${v.type}${v.make?' · '+v.make:''}${v.model?' '+v.model:''}</div>
-      <div class="info-row"><span class="icon">👤</span><span class="val">${driver ? driver.name+(driver.mobile?' &nbsp;📞 '+driver.mobile:'') : '<span class="no-assign">No Driver Assigned</span>'}</span></div>
-      <div class="info-row"><span class="icon">🏢</span><span class="val">${company ? company.name+(company.route?' · '+company.route:'') : '<span class="no-assign">No Company Assigned</span>'}</span></div>
-      ${asgn&&asgn.notes?`<div class="info-row"><span class="icon">📝</span><span class="val" style="color:#94a3b8;font-size:0.78rem">${asgn.notes}</span></div>`:''}
-    </div>`;
+
+  DB.vehicles.filter(v => v.status === 'active').forEach(v => {
+    const asgn    = dateAssigns.find(a => a.vehicleId === v.id);
+    const driver  = asgn ? DB.drivers.find(d => d.id === asgn.driverId)    : null;
+    const company = asgn ? DB.companies.find(c => c.id === asgn.companyId) : null;
+
+    if (search && !(
+      v.number.toLowerCase().includes(search) ||
+      (driver && driver.name.toLowerCase().includes(search))
+    )) return;
+    if (cfVal && (!company || company.id !== cfVal)) return;
+
+    html += `
+      <div class="vehicle-card">
+        <button class="btn btn-warning btn-sm edit-btn" onclick="quickAssignDate('${v.id}','${dashDate}')">✏ Edit</button>
+        <div class="vnum">🚛 ${v.number}</div>
+        <div class="vtype">${v.type}${v.make ? ' · ' + v.make : ''}${v.model ? ' ' + v.model : ''}</div>
+        <div class="info-row">
+          <span class="icon">👤</span>
+          <span class="val">${driver
+            ? driver.name + (driver.mobile ? ' &nbsp;📞 ' + driver.mobile : '')
+            : '<span class="no-assign">No Driver Assigned</span>'}</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">🏢</span>
+          <span class="val">${company
+            ? company.name + (company.route ? ' · ' + company.route : '')
+            : '<span class="no-assign">No Company Assigned</span>'}</span>
+        </div>
+        ${asgn && asgn.notes
+          ? `<div class="info-row"><span class="icon">📝</span><span class="val" style="color:#94a3b8;font-size:0.78rem">${asgn.notes}</span></div>`
+          : ''}
+      </div>`;
   });
-  document.getElementById('todayGrid').innerHTML = html || '<p style="color:#64748b;padding:20px">No vehicles found. Add vehicles first.</p>';
-  updateStats();
+
+  document.getElementById('todayGrid').innerHTML = html ||
+    `<div style="color:#64748b;padding:24px;text-align:center">
+       <p style="margin-bottom:14px">No assignments found for this date.</p>
+       ${!isToday
+         ? `<button class="btn btn-primary" onclick="copyToDate('${dashDate}')">📋 Copy from previous day</button>`
+         : '<p style="font-size:0.85rem">Use the Assignments tab or click ✏ Edit on a vehicle card.</p>'}
+     </div>`;
+
+  updateStats(dashDate);
+}
+
+// Navigate prev/next day
+function shiftDate(days) {
+  const inp = document.getElementById('dashboardDate');
+  const d   = new Date((inp.value || todayStr()) + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  inp.value = d.toISOString().split('T')[0];
+  renderToday();
+}
+
+// Jump to today
+function jumpToToday() {
+  document.getElementById('dashboardDate').value = todayStr();
+  renderToday();
+}
+
+// Quick edit for any date from dashboard card
+function quickAssignDate(vehicleId, date) {
+  populateAssignDropdowns();
+  const existing = DB.assignments.find(a => a.vehicleId === vehicleId && a.date === date);
+  document.getElementById('asgn_date').value    = date;
+  document.getElementById('asgn_notes').value   = existing?.notes || '';
+  document.getElementById('asgn_id').value      = existing?.id || '';
+  document.getElementById('asgn_vehicle').value = existing?.vehicleId || vehicleId;
+  if (existing) {
+    document.getElementById('asgn_driver').value  = existing.driverId;
+    document.getElementById('asgn_company').value = existing.companyId;
+  }
+  document.getElementById('assignmentModalTitle').textContent = `Assignment for ${date}`;
+  openModal('assignmentModal');
+}
+
+// Copy assignments from previous day to a specific date
+async function copyToDate(targetDate) {
+  const d = new Date(targetDate + 'T00:00:00');
+  d.setDate(d.getDate() - 1);
+  const prevDate    = d.toISOString().split('T')[0];
+  const prevAssigns = DB.assignments.filter(a => a.date === prevDate);
+  if (!prevAssigns.length) { toast(`No assignments found for ${prevDate}`, 'error'); return; }
+  const existing = DB.assignments.filter(a => a.date === targetDate);
+  let added = 0;
+  prevAssigns.forEach(a => {
+    if (!existing.find(x => x.vehicleId === a.vehicleId)) {
+      DB.assignments.push({ ...a, id: uid(), date: targetDate });
+      added++;
+    }
+  });
+  const ok = await saveToGitHub(`Copied ${added} assignments from ${prevDate} to ${targetDate}`);
+  if (ok) { renderAll(); toast(`Copied ${added} assignments to ${targetDate} ✓`); }
 }
 
 // ══════════════════════════════════════════
-// VEHICLES
+// VEHICLES CRUD
 // ══════════════════════════════════════════
 function renderVehicles() {
-  const q = (document.getElementById('vehicleSearch')?.value||'').toLowerCase();
-  const list = DB.vehicles.filter(v => v.number.toLowerCase().includes(q)||(v.make||'').toLowerCase().includes(q));
-  document.getElementById('vehicleTable').innerHTML = list.map((v,i)=>`
-    <tr><td>${i+1}</td><td><strong>${v.number}</strong></td><td>${v.type}</td>
-    <td>${[v.make,v.model,v.year].filter(Boolean).join(' ')||'-'}</td>
-    <td><span class="badge badge-${v.status}">${v.status}</span></td>
-    <td><div class="action-btns">
-      <button class="btn btn-warning btn-sm" onclick="editVehicle('${v.id}')">✏</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteVehicle('${v.id}')">🗑</button>
-    </div></td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">No vehicles yet.</td></tr>';
+  const q = (document.getElementById('vehicleSearch')?.value || '').toLowerCase();
+  const list = DB.vehicles.filter(v =>
+    v.number.toLowerCase().includes(q) || (v.make||'').toLowerCase().includes(q)
+  );
+  document.getElementById('vehicleTable').innerHTML = list.map((v, i) => `
+    <tr>
+      <td>${i+1}</td><td><strong>${v.number}</strong></td><td>${v.type}</td>
+      <td>${[v.make, v.model, v.year].filter(Boolean).join(' ') || '-'}</td>
+      <td><span class="badge badge-${v.status}">${v.status}</span></td>
+      <td><div class="action-btns">
+        <button class="btn btn-warning btn-sm" onclick="editVehicle('${v.id}')">✏</button>
+        <button class="btn btn-danger btn-sm"  onclick="deleteVehicle('${v.id}')">🗑</button>
+      </div></td>
+    </tr>`).join('') ||
+    '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">No vehicles yet.</td></tr>';
 }
 
 function openVehicleModal() {
-  ['veh_number','veh_make','veh_model','veh_year','veh_notes','veh_id'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('veh_type').value='Truck';
-  document.getElementById('veh_status').value='active';
-  document.getElementById('vehicleModalTitle').textContent='Add Vehicle';
+  ['veh_number','veh_make','veh_model','veh_year','veh_notes','veh_id'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('veh_type').value   = 'Truck';
+  document.getElementById('veh_status').value = 'active';
+  document.getElementById('vehicleModalTitle').textContent = 'Add Vehicle';
   openModal('vehicleModal');
 }
 
 function editVehicle(id) {
-  const v = DB.vehicles.find(x=>x.id===id); if(!v) return;
-  document.getElementById('veh_number').value=v.number;
-  document.getElementById('veh_type').value=v.type;
-  document.getElementById('veh_make').value=v.make||'';
-  document.getElementById('veh_model').value=v.model||'';
-  document.getElementById('veh_year').value=v.year||'';
-  document.getElementById('veh_status').value=v.status;
-  document.getElementById('veh_notes').value=v.notes||'';
-  document.getElementById('veh_id').value=v.id;
-  document.getElementById('vehicleModalTitle').textContent='Edit Vehicle';
+  const v = DB.vehicles.find(x => x.id === id); if (!v) return;
+  document.getElementById('veh_number').value = v.number;
+  document.getElementById('veh_type').value   = v.type;
+  document.getElementById('veh_make').value   = v.make  || '';
+  document.getElementById('veh_model').value  = v.model || '';
+  document.getElementById('veh_year').value   = v.year  || '';
+  document.getElementById('veh_status').value = v.status;
+  document.getElementById('veh_notes').value  = v.notes || '';
+  document.getElementById('veh_id').value     = v.id;
+  document.getElementById('vehicleModalTitle').textContent = 'Edit Vehicle';
   openModal('vehicleModal');
 }
 
 async function saveVehicle() {
   const number = document.getElementById('veh_number').value.trim();
-  if(!number){ toast('Vehicle number required!','error'); return; }
-  const id = document.getElementById('veh_id').value;
-  const obj = { id:id||uid(), number,
-    type:  document.getElementById('veh_type').value,
-    make:  document.getElementById('veh_make').value.trim(),
-    model: document.getElementById('veh_model').value.trim(),
-    year:  document.getElementById('veh_year').value.trim(),
-    status:document.getElementById('veh_status').value,
-    notes: document.getElementById('veh_notes').value.trim() };
-  if(id){ const idx=DB.vehicles.findIndex(x=>x.id===id); DB.vehicles[idx]=obj; }
+  if (!number) { toast('Vehicle number required!', 'error'); return; }
+  const id  = document.getElementById('veh_id').value;
+  const obj = {
+    id: id || uid(), number,
+    type:   document.getElementById('veh_type').value,
+    make:   document.getElementById('veh_make').value.trim(),
+    model:  document.getElementById('veh_model').value.trim(),
+    year:   document.getElementById('veh_year').value.trim(),
+    status: document.getElementById('veh_status').value,
+    notes:  document.getElementById('veh_notes').value.trim()
+  };
+  if (id) { const idx = DB.vehicles.findIndex(x => x.id === id); DB.vehicles[idx] = obj; }
   else DB.vehicles.push(obj);
   closeModal('vehicleModal');
   const ok = await saveToGitHub(`Vehicle saved: ${number}`);
-  if(ok){ renderAll(); toast('Vehicle saved & synced to GitHub ✓'); }
+  if (ok) { renderAll(); toast('Vehicle saved & synced to GitHub ✓'); }
 }
 
 async function deleteVehicle(id) {
-  const v = DB.vehicles.find(x=>x.id===id);
-  if(!confirm(`Delete vehicle ${v?.number}?`)) return;
-  DB.vehicles = DB.vehicles.filter(x=>x.id!==id);
+  const v = DB.vehicles.find(x => x.id === id);
+  if (!confirm(`Delete vehicle ${v?.number}?`)) return;
+  DB.vehicles = DB.vehicles.filter(x => x.id !== id);
   const ok = await saveToGitHub(`Vehicle deleted: ${v?.number}`);
-  if(ok){ renderAll(); toast('Vehicle deleted & synced ✓'); }
+  if (ok) { renderAll(); toast('Vehicle deleted & synced ✓'); }
 }
 
 // ══════════════════════════════════════════
-// DRIVERS
+// DRIVERS CRUD
 // ══════════════════════════════════════════
 function renderDrivers() {
-  const q = (document.getElementById('driverSearch')?.value||'').toLowerCase();
-  const list = DB.drivers.filter(d=>d.name.toLowerCase().includes(q)||(d.mobile||'').includes(q));
-  document.getElementById('driverTable').innerHTML = list.map((d,i)=>`
-    <tr><td>${i+1}</td><td><strong>${d.name}</strong></td><td>${d.mobile||'-'}</td>
-    <td>${d.license||'-'}</td><td>${d.expiry||'-'}</td>
-    <td><span class="badge badge-${d.status}">${d.status}</span></td>
-    <td><div class="action-btns">
-      <button class="btn btn-warning btn-sm" onclick="editDriver('${d.id}')">✏</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteDriver('${d.id}')">🗑</button>
-    </div></td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px">No drivers yet.</td></tr>';
+  const q = (document.getElementById('driverSearch')?.value || '').toLowerCase();
+  const list = DB.drivers.filter(d =>
+    d.name.toLowerCase().includes(q) || (d.mobile||'').includes(q)
+  );
+  document.getElementById('driverTable').innerHTML = list.map((d, i) => `
+    <tr>
+      <td>${i+1}</td><td><strong>${d.name}</strong></td><td>${d.mobile||'-'}</td>
+      <td>${d.license||'-'}</td><td>${d.expiry||'-'}</td>
+      <td><span class="badge badge-${d.status}">${d.status}</span></td>
+      <td><div class="action-btns">
+        <button class="btn btn-warning btn-sm" onclick="editDriver('${d.id}')">✏</button>
+        <button class="btn btn-danger btn-sm"  onclick="deleteDriver('${d.id}')">🗑</button>
+      </div></td>
+    </tr>`).join('') ||
+    '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px">No drivers yet.</td></tr>';
 }
 
 function openDriverModal() {
-  ['drv_name','drv_mobile','drv_license','drv_address','drv_notes','drv_id'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('drv_expiry').value='';
-  document.getElementById('drv_status').value='active';
-  document.getElementById('driverModalTitle').textContent='Add Driver';
+  ['drv_name','drv_mobile','drv_license','drv_address','drv_notes','drv_id'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('drv_expiry').value  = '';
+  document.getElementById('drv_status').value  = 'active';
+  document.getElementById('driverModalTitle').textContent = 'Add Driver';
   openModal('driverModal');
 }
 
 function editDriver(id) {
-  const d = DB.drivers.find(x=>x.id===id); if(!d) return;
-  document.getElementById('drv_name').value=d.name;
-  document.getElementById('drv_mobile').value=d.mobile||'';
-  document.getElementById('drv_license').value=d.license||'';
-  document.getElementById('drv_expiry').value=d.expiry||'';
-  document.getElementById('drv_address').value=d.address||'';
-  document.getElementById('drv_status').value=d.status;
-  document.getElementById('drv_notes').value=d.notes||'';
-  document.getElementById('drv_id').value=d.id;
-  document.getElementById('driverModalTitle').textContent='Edit Driver';
+  const d = DB.drivers.find(x => x.id === id); if (!d) return;
+  document.getElementById('drv_name').value    = d.name;
+  document.getElementById('drv_mobile').value  = d.mobile  || '';
+  document.getElementById('drv_license').value = d.license || '';
+  document.getElementById('drv_expiry').value  = d.expiry  || '';
+  document.getElementById('drv_address').value = d.address || '';
+  document.getElementById('drv_status').value  = d.status;
+  document.getElementById('drv_notes').value   = d.notes   || '';
+  document.getElementById('drv_id').value      = d.id;
+  document.getElementById('driverModalTitle').textContent = 'Edit Driver';
   openModal('driverModal');
 }
 
 async function saveDriver() {
   const name = document.getElementById('drv_name').value.trim();
-  if(!name){ toast('Driver name required!','error'); return; }
-  const id = document.getElementById('drv_id').value;
-  const obj = { id:id||uid(), name,
+  if (!name) { toast('Driver name required!', 'error'); return; }
+  const id  = document.getElementById('drv_id').value;
+  const obj = {
+    id: id || uid(), name,
     mobile:  document.getElementById('drv_mobile').value.trim(),
     license: document.getElementById('drv_license').value.trim(),
     expiry:  document.getElementById('drv_expiry').value,
     address: document.getElementById('drv_address').value.trim(),
     status:  document.getElementById('drv_status').value,
-    notes:   document.getElementById('drv_notes').value.trim() };
-  if(id){ const idx=DB.drivers.findIndex(x=>x.id===id); DB.drivers[idx]=obj; }
+    notes:   document.getElementById('drv_notes').value.trim()
+  };
+  if (id) { const idx = DB.drivers.findIndex(x => x.id === id); DB.drivers[idx] = obj; }
   else DB.drivers.push(obj);
   closeModal('driverModal');
   const ok = await saveToGitHub(`Driver saved: ${name}`);
-  if(ok){ renderAll(); toast('Driver saved & synced to GitHub ✓'); }
+  if (ok) { renderAll(); toast('Driver saved & synced to GitHub ✓'); }
 }
 
 async function deleteDriver(id) {
-  const d = DB.drivers.find(x=>x.id===id);
-  if(!confirm(`Delete driver ${d?.name}?`)) return;
-  DB.drivers = DB.drivers.filter(x=>x.id!==id);
+  const d = DB.drivers.find(x => x.id === id);
+  if (!confirm(`Delete driver ${d?.name}?`)) return;
+  DB.drivers = DB.drivers.filter(x => x.id !== id);
   const ok = await saveToGitHub(`Driver deleted: ${d?.name}`);
-  if(ok){ renderAll(); toast('Driver deleted & synced ✓'); }
+  if (ok) { renderAll(); toast('Driver deleted & synced ✓'); }
 }
 
 // ══════════════════════════════════════════
-// COMPANIES
+// COMPANIES CRUD
 // ══════════════════════════════════════════
 function renderCompanies() {
-  const q = (document.getElementById('companySearch')?.value||'').toLowerCase();
-  const list = DB.companies.filter(c=>c.name.toLowerCase().includes(q));
-  document.getElementById('companyTable').innerHTML = list.map((c,i)=>`
-    <tr><td>${i+1}</td><td><strong>${c.name}</strong></td><td>${c.contact||'-'}</td>
-    <td>${c.mobile||'-'}</td><td>${c.route||'-'}</td>
-    <td><div class="action-btns">
-      <button class="btn btn-warning btn-sm" onclick="editCompany('${c.id}')">✏</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteCompany('${c.id}')">🗑</button>
-    </div></td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">No companies yet.</td></tr>';
+  const q = (document.getElementById('companySearch')?.value || '').toLowerCase();
+  const list = DB.companies.filter(c => c.name.toLowerCase().includes(q));
+  document.getElementById('companyTable').innerHTML = list.map((c, i) => `
+    <tr>
+      <td>${i+1}</td><td><strong>${c.name}</strong></td><td>${c.contact||'-'}</td>
+      <td>${c.mobile||'-'}</td><td>${c.route||'-'}</td>
+      <td><div class="action-btns">
+        <button class="btn btn-warning btn-sm" onclick="editCompany('${c.id}')">✏</button>
+        <button class="btn btn-danger btn-sm"  onclick="deleteCompany('${c.id}')">🗑</button>
+      </div></td>
+    </tr>`).join('') ||
+    '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">No companies yet.</td></tr>';
 }
 
 function openCompanyModal() {
-  ['cmp_name','cmp_contact','cmp_mobile','cmp_route','cmp_goods','cmp_notes','cmp_id'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('companyModalTitle').textContent='Add Company';
+  ['cmp_name','cmp_contact','cmp_mobile','cmp_route','cmp_goods','cmp_notes','cmp_id'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('companyModalTitle').textContent = 'Add Company';
   openModal('companyModal');
 }
 
 function editCompany(id) {
-  const c = DB.companies.find(x=>x.id===id); if(!c) return;
-  document.getElementById('cmp_name').value=c.name;
-  document.getElementById('cmp_contact').value=c.contact||'';
-  document.getElementById('cmp_mobile').value=c.mobile||'';
-  document.getElementById('cmp_route').value=c.route||'';
-  document.getElementById('cmp_goods').value=c.goods||'';
-  document.getElementById('cmp_notes').value=c.notes||'';
-  document.getElementById('cmp_id').value=c.id;
-  document.getElementById('companyModalTitle').textContent='Edit Company';
+  const c = DB.companies.find(x => x.id === id); if (!c) return;
+  document.getElementById('cmp_name').value    = c.name;
+  document.getElementById('cmp_contact').value = c.contact || '';
+  document.getElementById('cmp_mobile').value  = c.mobile  || '';
+  document.getElementById('cmp_route').value   = c.route   || '';
+  document.getElementById('cmp_goods').value   = c.goods   || '';
+  document.getElementById('cmp_notes').value   = c.notes   || '';
+  document.getElementById('cmp_id').value      = c.id;
+  document.getElementById('companyModalTitle').textContent = 'Edit Company';
   openModal('companyModal');
 }
 
 async function saveCompany() {
   const name = document.getElementById('cmp_name').value.trim();
-  if(!name){ toast('Company name required!','error'); return; }
-  const id = document.getElementById('cmp_id').value;
-  const obj = { id:id||uid(), name,
+  if (!name) { toast('Company name required!', 'error'); return; }
+  const id  = document.getElementById('cmp_id').value;
+  const obj = {
+    id: id || uid(), name,
     contact: document.getElementById('cmp_contact').value.trim(),
     mobile:  document.getElementById('cmp_mobile').value.trim(),
     route:   document.getElementById('cmp_route').value.trim(),
     goods:   document.getElementById('cmp_goods').value.trim(),
-    notes:   document.getElementById('cmp_notes').value.trim() };
-  if(id){ const idx=DB.companies.findIndex(x=>x.id===id); DB.companies[idx]=obj; }
+    notes:   document.getElementById('cmp_notes').value.trim()
+  };
+  if (id) { const idx = DB.companies.findIndex(x => x.id === id); DB.companies[idx] = obj; }
   else DB.companies.push(obj);
   closeModal('companyModal');
   const ok = await saveToGitHub(`Company saved: ${name}`);
-  if(ok){ renderAll(); toast('Company saved & synced to GitHub ✓'); }
+  if (ok) { renderAll(); toast('Company saved & synced to GitHub ✓'); }
 }
 
 async function deleteCompany(id) {
-  const c = DB.companies.find(x=>x.id===id);
-  if(!confirm(`Delete company ${c?.name}?`)) return;
-  DB.companies = DB.companies.filter(x=>x.id!==id);
+  const c = DB.companies.find(x => x.id === id);
+  if (!confirm(`Delete company ${c?.name}?`)) return;
+  DB.companies = DB.companies.filter(x => x.id !== id);
   const ok = await saveToGitHub(`Company deleted: ${c?.name}`);
-  if(ok){ renderAll(); toast('Company deleted & synced ✓'); }
+  if (ok) { renderAll(); toast('Company deleted & synced ✓'); }
 }
 
 // ══════════════════════════════════════════
-// ASSIGNMENTS
+// ASSIGNMENTS CRUD
 // ══════════════════════════════════════════
 function renderAssignments() {
   const date = document.getElementById('assignDate')?.value || todayStr();
   document.getElementById('assignmentTable').innerHTML =
-    DB.assignments.filter(a=>a.date===date).map(a=>{
-      const v=DB.vehicles.find(x=>x.id===a.vehicleId);
-      const d=DB.drivers.find(x=>x.id===a.driverId);
-      const c=DB.companies.find(x=>x.id===a.companyId);
-      return `<tr><td>${a.date}</td><td>${v?v.number:'—'}</td><td>${d?d.name:'—'}</td>
-        <td>${c?c.name:'—'}</td><td>${a.notes||'-'}</td>
+    DB.assignments.filter(a => a.date === date).map(a => {
+      const v = DB.vehicles.find(x => x.id === a.vehicleId);
+      const d = DB.drivers.find(x => x.id === a.driverId);
+      const c = DB.companies.find(x => x.id === a.companyId);
+      return `<tr>
+        <td>${a.date}</td><td>${v ? v.number : '—'}</td>
+        <td>${d ? d.name : '—'}</td><td>${c ? c.name : '—'}</td>
+        <td>${a.notes || '-'}</td>
         <td><div class="action-btns">
           <button class="btn btn-warning btn-sm" onclick="editAssignment('${a.id}')">✏</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteAssignment('${a.id}')">🗑</button>
-        </div></td></tr>`;
-    }).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">No assignments for this date.</td></tr>';
+          <button class="btn btn-danger btn-sm"  onclick="deleteAssignment('${a.id}')">🗑</button>
+        </div></td>
+      </tr>`;
+    }).join('') ||
+    '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px">No assignments for this date.</td></tr>';
 }
 
 function populateAssignDropdowns() {
-  document.getElementById('asgn_vehicle').innerHTML = DB.vehicles.filter(v=>v.status==='active').map(v=>`<option value="${v.id}">${v.number} (${v.type})</option>`).join('');
-  document.getElementById('asgn_driver').innerHTML  = DB.drivers.filter(d=>d.status==='active').map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
-  document.getElementById('asgn_company').innerHTML = DB.companies.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('asgn_vehicle').innerHTML =
+    DB.vehicles.filter(v => v.status === 'active')
+      .map(v => `<option value="${v.id}">${v.number} (${v.type})</option>`).join('');
+  document.getElementById('asgn_driver').innerHTML =
+    DB.drivers.filter(d => d.status === 'active')
+      .map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+  document.getElementById('asgn_company').innerHTML =
+    DB.companies.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 }
 
 function openAssignModal() {
-  document.getElementById('asgn_id').value='';
-  document.getElementById('asgn_date').value=document.getElementById('assignDate')?.value||todayStr();
-  document.getElementById('asgn_notes').value='';
-  document.getElementById('assignmentModalTitle').textContent='New Assignment';
+  document.getElementById('asgn_id').value    = '';
+  document.getElementById('asgn_date').value  = document.getElementById('assignDate')?.value || todayStr();
+  document.getElementById('asgn_notes').value = '';
+  document.getElementById('assignmentModalTitle').textContent = 'New Assignment';
   populateAssignDropdowns();
-  openModal('assignmentModal');
-}
-
-function quickAssign(vehicleId) {
-  populateAssignDropdowns();
-  const existing = DB.assignments.find(a=>a.vehicleId===vehicleId && a.date===todayStr());
-  document.getElementById('asgn_date').value=todayStr();
-  document.getElementById('asgn_notes').value=existing?.notes||'';
-  document.getElementById('asgn_id').value=existing?.id||'';
-  document.getElementById('asgn_vehicle').value=existing?.vehicleId||vehicleId;
-  if(existing){ document.getElementById('asgn_driver').value=existing.driverId; document.getElementById('asgn_company').value=existing.companyId; }
-  document.getElementById('assignmentModalTitle').textContent="Edit Today's Assignment";
   openModal('assignmentModal');
 }
 
 function editAssignment(id) {
-  const a=DB.assignments.find(x=>x.id===id); if(!a) return;
+  const a = DB.assignments.find(x => x.id === id); if (!a) return;
   populateAssignDropdowns();
-  document.getElementById('asgn_date').value=a.date;
-  document.getElementById('asgn_vehicle').value=a.vehicleId;
-  document.getElementById('asgn_driver').value=a.driverId;
-  document.getElementById('asgn_company').value=a.companyId;
-  document.getElementById('asgn_notes').value=a.notes||'';
-  document.getElementById('asgn_id').value=a.id;
-  document.getElementById('assignmentModalTitle').textContent='Edit Assignment';
+  document.getElementById('asgn_date').value    = a.date;
+  document.getElementById('asgn_vehicle').value = a.vehicleId;
+  document.getElementById('asgn_driver').value  = a.driverId;
+  document.getElementById('asgn_company').value = a.companyId;
+  document.getElementById('asgn_notes').value   = a.notes || '';
+  document.getElementById('asgn_id').value      = a.id;
+  document.getElementById('assignmentModalTitle').textContent = 'Edit Assignment';
   openModal('assignmentModal');
 }
 
 async function saveAssignment() {
-  const date=document.getElementById('asgn_date').value;
-  const vehicleId=document.getElementById('asgn_vehicle').value;
-  const driverId=document.getElementById('asgn_driver').value;
-  const companyId=document.getElementById('asgn_company').value;
-  if(!date||!vehicleId||!driverId||!companyId){ toast('All fields required!','error'); return; }
-  const id=document.getElementById('asgn_id').value;
-  const dup=DB.assignments.find(a=>a.vehicleId===vehicleId&&a.date===date&&a.id!==id);
-  if(dup){ toast('This vehicle is already assigned on this date!','error'); return; }
-  const obj={id:id||uid(),date,vehicleId,driverId,companyId,notes:document.getElementById('asgn_notes').value.trim()};
-  if(id){ const idx=DB.assignments.findIndex(x=>x.id===id); DB.assignments[idx]=obj; }
+  const date      = document.getElementById('asgn_date').value;
+  const vehicleId = document.getElementById('asgn_vehicle').value;
+  const driverId  = document.getElementById('asgn_driver').value;
+  const companyId = document.getElementById('asgn_company').value;
+  if (!date || !vehicleId || !driverId || !companyId) { toast('All fields required!', 'error'); return; }
+  const id  = document.getElementById('asgn_id').value;
+  const dup = DB.assignments.find(a => a.vehicleId === vehicleId && a.date === date && a.id !== id);
+  if (dup) { toast('This vehicle is already assigned on this date!', 'error'); return; }
+  const obj = { id: id || uid(), date, vehicleId, driverId, companyId, notes: document.getElementById('asgn_notes').value.trim() };
+  if (id) { const idx = DB.assignments.findIndex(x => x.id === id); DB.assignments[idx] = obj; }
   else DB.assignments.push(obj);
-  const v=DB.vehicles.find(x=>x.id===vehicleId);
-  const d=DB.drivers.find(x=>x.id===driverId);
+  const v  = DB.vehicles.find(x => x.id === vehicleId);
+  const dr = DB.drivers.find(x => x.id === driverId);
   closeModal('assignmentModal');
-  const ok=await saveToGitHub(`Assignment: ${v?.number} → ${d?.name} on ${date}`);
-  if(ok){ renderAll(); toast('Assignment saved & synced to GitHub ✓'); }
+  const ok = await saveToGitHub(`Assignment: ${v?.number} → ${dr?.name} on ${date}`);
+  if (ok) { renderAll(); toast('Assignment saved & synced to GitHub ✓'); }
 }
 
 async function deleteAssignment(id) {
-  if(!confirm('Delete this assignment?')) return;
-  DB.assignments=DB.assignments.filter(a=>a.id!==id);
-  const ok=await saveToGitHub('Assignment deleted');
-  if(ok){ renderAll(); toast('Assignment deleted & synced ✓'); }
+  if (!confirm('Delete this assignment?')) return;
+  DB.assignments = DB.assignments.filter(a => a.id !== id);
+  const ok = await saveToGitHub('Assignment deleted');
+  if (ok) { renderAll(); toast('Assignment deleted & synced ✓'); }
 }
 
 async function copyYesterdayAssignments() {
-  const selDate=document.getElementById('assignDate').value||todayStr();
-  const d=new Date(selDate); d.setDate(d.getDate()-1);
-  const yest=d.toISOString().split('T')[0];
-  const yAssigns=DB.assignments.filter(a=>a.date===yest);
-  if(!yAssigns.length){ toast('No assignments found for yesterday.','error'); return; }
-  const todayAssigns=DB.assignments.filter(a=>a.date===selDate);
-  let added=0;
-  yAssigns.forEach(a=>{ if(!todayAssigns.find(x=>x.vehicleId===a.vehicleId)){ DB.assignments.push({...a,id:uid(),date:selDate}); added++; } });
-  const ok=await saveToGitHub(`Copied ${added} assignments from ${yest} to ${selDate}`);
-  if(ok){ renderAll(); toast(`Copied ${added} assignments & synced ✓`); }
+  const selDate = document.getElementById('assignDate').value || todayStr();
+  const d = new Date(selDate + 'T00:00:00');
+  d.setDate(d.getDate() - 1);
+  const yest = d.toISOString().split('T')[0];
+  const yAssigns = DB.assignments.filter(a => a.date === yest);
+  if (!yAssigns.length) { toast('No assignments found for yesterday.', 'error'); return; }
+  const todayAssigns = DB.assignments.filter(a => a.date === selDate);
+  let added = 0;
+  yAssigns.forEach(a => {
+    if (!todayAssigns.find(x => x.vehicleId === a.vehicleId)) {
+      DB.assignments.push({ ...a, id: uid(), date: selDate });
+      added++;
+    }
+  });
+  const ok = await saveToGitHub(`Copied ${added} assignments from ${yest} to ${selDate}`);
+  if (ok) { renderAll(); toast(`Copied ${added} assignments & synced ✓`); }
 }
 
-// Close modal on overlay click
-document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+// ══════════════════════════════════════════
+// CLOSE MODAL ON OVERLAY CLICK
+// ══════════════════════════════════════════
+document.querySelectorAll('.overlay').forEach(o =>
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); })
+);
 document.getElementById('assignDate').addEventListener('change', renderAssignments);
 </script>
 </body>
