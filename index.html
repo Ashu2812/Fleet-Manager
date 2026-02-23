@@ -132,24 +132,26 @@
 
   <!-- ═══ DASHBOARD (TODAY / ANY DATE) ═══ -->
   <div id="tab-today" class="tab-content active">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
-      <div id="todayDate" class="date-badge"></div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-info btn-sm" onclick="shiftDate(-1)">◀ Prev</button>
-        <input type="date" id="dashboardDate" onchange="renderToday()"
-          style="padding:5px 10px;border-radius:7px;border:1px solid #2d3748;background:#1e293b;color:#e2e8f0;font-size:0.88rem;"/>
-        <button class="btn btn-info btn-sm" onclick="shiftDate(1)">Next ▶</button>
-        <button class="btn btn-success btn-sm" onclick="jumpToToday()">📅 Today</button>
-      </div>
-    </div>
-    <div class="stats" id="statsBar"></div>
-    <div class="toolbar">
-      <input type="text" id="todaySearch" placeholder="🔍 Search vehicle or driver..." oninput="renderToday()"/>
-      <select id="todayCompanyFilter" onchange="renderToday()"><option value="">All Companies</option></select>
-      <button class="btn btn-info" onclick="loadFromGitHub()">🔄 Refresh Data</button>
-    </div>
-    <div class="vehicle-grid" id="todayGrid"></div>
+
+  <!-- DATE NAVIGATION ROW -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
+    <div id="todayDate" class="date-badge"></div>
+    <button class="btn btn-info btn-sm" onclick="shiftDate(-1)">◀ Prev</button>
+    <input type="date" id="dashboardDate" onchange="renderToday()"
+      style="padding:6px 12px;border-radius:7px;border:1px solid #2d3748;
+             background:#1e293b;color:#e2e8f0;font-size:0.88rem;cursor:pointer;"/>
+    <button class="btn btn-info btn-sm" onclick="shiftDate(1)">Next ▶</button>
+    <button class="btn btn-success btn-sm" onclick="jumpToToday()">📅 Today</button>
   </div>
+
+  <div class="stats" id="statsBar"></div>
+  <div class="toolbar">
+    <input type="text" id="todaySearch" placeholder="🔍 Search vehicle or driver..." oninput="renderToday()"/>
+    <select id="todayCompanyFilter" onchange="renderToday()"><option value="">All Companies</option></select>
+    <button class="btn btn-info" onclick="loadFromGitHub()">🔄 Refresh Data</button>
+  </div>
+  <div class="vehicle-grid" id="todayGrid"></div>
+</div>
 
   <!-- ═══ VEHICLES ═══ -->
   <div id="tab-vehicles" class="tab-content">
