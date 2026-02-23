@@ -23,6 +23,16 @@
       "notes": ""
     }
   ],
-  "companies": [],
+  "companies": [
+    {
+      "id": "mlz4j683oqau9",
+      "name": "City Mall",
+      "contact": "Chandresh Kumar",
+      "mobile": "9999999999",
+      "route": "Delhi Noida",
+      "goods": "FMCG",
+      "notes": ""
+    }
+  ],
   "assignments": []
 }
