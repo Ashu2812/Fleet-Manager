@@ -9,6 +9,16 @@
       "year": "2023",
       "status": "active",
       "notes": ""
+    },
+    {
+      "id": "mlz4lopunt6vw",
+      "number": "HP04XY1234",
+      "type": "Truck",
+      "make": "Tata",
+      "model": "1109",
+      "year": "2022",
+      "status": "active",
+      "notes": ""
     }
   ],
   "drivers": [
