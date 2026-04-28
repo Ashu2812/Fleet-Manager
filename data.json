@@ -1,16 +1,6 @@
 {
   "vehicles": [
     {
-      "id": "mlz4i77n5c2bt",
-      "number": "HR98K4337",
-      "type": "Tempo",
-      "make": "Tata",
-      "model": "407",
-      "year": "2023",
-      "status": "active",
-      "notes": ""
-    },
-    {
       "id": "mlz4lopunt6vw",
       "number": "HP04XY1234",
       "type": "Truck",
