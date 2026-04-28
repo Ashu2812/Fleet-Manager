@@ -33,16 +33,6 @@
   ],
   "drivers": [
     {
-      "id": "mlz4iqm3vmd1s",
-      "name": "Rakesh Kumar",
-      "mobile": "9999999999",
-      "license": "XYZ1234X",
-      "expiry": "2030-02-20",
-      "address": "Sunrise Apartment",
-      "status": "active",
-      "notes": ""
-    },
-    {
       "id": "mlz4l3rqainps",
       "name": "Sunil Kumar",
       "mobile": "9999999999",
