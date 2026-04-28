@@ -23,9 +23,19 @@
     {
       "id": "mm33dmakegswl",
       "number": "DL1LAR0630",
-      "type": "मिनी ट्रक",
+      "type": "à¤®à¤¿à¤¨à¥ à¤à¥à¤°à¤",
       "make": "Tata",
       "model": "8 ft",
+      "year": "2026",
+      "status": "active",
+      "notes": ""
+    },
+    {
+      "id": "moikek3aftyga",
+      "number": "HR63G6080",
+      "type": "Tempo",
+      "make": "Tata",
+      "model": "Ace",
       "year": "2026",
       "status": "active",
       "notes": ""
