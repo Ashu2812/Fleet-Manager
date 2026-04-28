@@ -13,7 +13,7 @@
     {
       "id": "mm33dmakegswl",
       "number": "DL1LAR0630",
-      "type": "à¤®à¤¿à¤¨à¥ à¤à¥à¤°à¤",
+      "type": "Ã Â¤Â®Ã Â¤Â¿Ã Â¤Â¨Ã Â¥Â Ã Â¤ÂÃ Â¥ÂÃ Â¤Â°Ã Â¤Â",
       "make": "Tata",
       "model": "8 ft",
       "year": "2026",
@@ -114,6 +114,14 @@
       "vehicleId": "mlz4lopunt6vw",
       "driverId": "mlz4l3rqainps",
       "companyId": "mlz4kmy2hafp5",
+      "notes": ""
+    },
+    {
+      "id": "moikhty3ccv5s",
+      "date": "2026-04-28",
+      "vehicleId": "moikek3aftyga",
+      "driverId": "moikg34eu28uw",
+      "companyId": "mlz4j683oqau9",
       "notes": ""
     }
   ]
