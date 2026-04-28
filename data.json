@@ -1,16 +1,6 @@
 {
   "vehicles": [
     {
-      "id": "mlz4lopunt6vw",
-      "number": "HP04XY1234",
-      "type": "Truck",
-      "make": "Tata",
-      "model": "1109",
-      "year": "2022",
-      "status": "active",
-      "notes": ""
-    },
-    {
       "id": "moikek3aftyga",
       "number": "HR63G6080",
       "type": "Tempo",
