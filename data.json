@@ -81,6 +81,15 @@
       "route": "NCR",
       "goods": "FMCG",
       "notes": ""
+    },
+    {
+      "id": "moikqygcojhs9",
+      "name": "Blinkit",
+      "contact": "Gaurav goyal",
+      "mobile": "7838599046",
+      "route": "Delhi, Dadri, Taj Nagar",
+      "goods": "FMCG",
+      "notes": ""
     }
   ],
   "assignments": [
